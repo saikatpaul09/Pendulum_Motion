@@ -1,0 +1,87 @@
+OBJECTIVE:
+
+1. To simulate the Transient Behaviour of a Pendulum by Solving Second Order Differential        Equation
+
+2. Obtain Plots for Angular Displacement and Angular Velocity vs Time.
+
+INTRODUCTION:
+
+Consider a simple pendulum system. A ball of mass m connected to a mass-less string of length L. The ball is made to swing to and fro. Due to action of gravity and air resistance the ball stops swinging at some particular point of time. The way a pendulum moves simply depends on newtons second law, F = ma. The second order linear non-homogenous equation is given below.
+
+Here, L = length of the pendulum in m 
+
+g = gravitational acceleration in m/sec^2 
+
+m = mass of the ball in kg
+
+b = damping coefficient
+
+What we will do next is try creating an array so that we can pass our initial conditions value and compute the equation. Below given is an image showing how a second order derivative could be converted into first order derivative. 
+
+
+
+Value of Constant parametres:
+
+L = 1 m
+
+m = 0.1 kg
+
+b = 0.02
+
+g = 9.81 m/sec^2
+
+Initial Conditions:
+
+We will simulate the motion between 0-10 sec, for initial conditions we will take angular displacement = 0 rad and initial angular velocity =3rad/sec^2 at time t = 0
+
+Python Code Snippet
+import math
+import matplotlib.pyplot as plt
+import numpy as np 
+from scipy.integrate import odeint
+
+def pendulum_eq(theta, t, b, g, l, m): 
+	theta1=theta[0]
+	theta2=theta[1]
+	dtheta1_dt = theta2
+	dtheta2_dt = (-b/m)*theta2-(g/l)*math.sin(theta1)
+	dtheta_dt=[dtheta1_dt,dtheta2_dt]
+	return dtheta_dt 
+
+
+b=0.02
+g=9.81
+l=1
+m=0.1
+theta_0 = [0,2] #initial conditions
+t = np.linspace(0,10,150)
+points = len(t)
+L= np.arange(0,points,1)
+theta = odeint(pendulum_eq,theta_0,t, args=(b,g,l,m) )
+plt.plot(t,theta[:,0],\'r-\')
+plt.plot(t,theta[:,1],\'b--\')
+plt.xlabel(\'Time\')
+plt.ylabel(\'Plot\')
+plt.title(\'Displacement and Angular velocity vs time \')
+# Animation
+theta1 = theta[:,1]
+x = l*np.sin(theta1)
+y = -l*np.cos(theta1)
+for points in L:
+	plt.figure()
+	plt.plot(x[points],y[points],\'bo\',markersize=20)
+	plt.plot([0,x[points]],[0,y[points]])
+	plt.xlim(-l-0.5,l+0.5)
+	plt.ylim(-l-0.5,l+0.5)
+	plt.xlabel( \'X cordinates\')
+	plt.ylabel(\'Y cordinates\')
+	plt.title(\'Transient Pendulum Simulation\')
+	file_no = points
+	file_no = format(file_no,\"01\")
+	filename = \"{}.png\".format(file_no)
+	plt.savefig(filename)
+	plt.close()
+	
+
+
+
